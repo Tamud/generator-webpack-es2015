@@ -1,0 +1,1 @@
+# generator-webpack-es2015
