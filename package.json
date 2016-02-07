@@ -1,0 +1,19 @@
+{
+  "name": "generator-webpack-es2015",
+  "version": "1.0.0",
+  "description": "generate development environment built on webpack and es2015",
+  "files": "app",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Tamud/generator-webpack-es2015.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "yeoman-generator",
+    "webpack",
+    "es2015"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.22.5"
+  }
+}
