@@ -1,4 +1,5 @@
-var generators = require('yeoman-generator');
+var generators = require("yeoman-generator");
+var mkdirp = require("mkdirp");
 
 module.exports = generators.Base.extend({
     prompting: function () {
@@ -50,21 +51,35 @@ module.exports = generators.Base.extend({
     },
     writing: function () {
         var answer = this.config.get("answer");
-        var src = this.templatePath("package.json");
-        var dest = this.destinationPath("package.json");
+        var srcRoot = this.templatePath();
+        var buildRoot = this.destinationPath();
+        var pkgJSON = "/package.json";
+        var webpackrc = "/webpack.config.js";
+        var eslintrc = "/.eslintrc";
+        var srcFolder = "/src/";
+        var buildFolder = "/build/";
+        var demoFolder = "/demo/";
 
-        console.log(src);
-        this.fs.copyTpl(src, dest, {
+        // create files
+        this.fs.copyTpl(srcRoot + pkgJSON, buildRoot + pkgJSON, {
             projectName: answer.projectName,
             projectDesc: answer.projectDesc,
             githubUsername: answer.githubUsername,
             githubRepoUrl: answer.githubRepoUrl,
             email: answer.email,
             license: answer.license
-        })
-    },
-    installDep: function () {
-        //console.log("installing")
+        });
+        this.fs.copyTpl(srcRoot + webpackrc, buildRoot + webpackrc, {
+            projectName: answer.projectName
+        });
+        this.fs.copy(srcRoot + eslintrc, buildRoot + eslintrc);
+
+        // create directories
+        mkdirp.sync(buildRoot + srcFolder);
+        mkdirp.sync(buildRoot + buildFolder);
+        mkdirp.sync(buildRoot + demoFolder);
+
+        // install dependencies
         this.npmInstall("", {"saveDev": true});
     }
 });
