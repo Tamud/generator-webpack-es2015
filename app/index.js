@@ -89,22 +89,26 @@ module.exports = generators.Base.extend({
         // create files
         walker.on("file", function fileHandler (root, stat, next) {
             var filename = "/" + stat.name;
+            var relativePath = root.replace(srcRoot, "");
+            var destPath = buildRoot + relativePath;
 
-            this.fs.copyTpl(srcRoot + filename, buildRoot + filename, answer);
+            this.fs.copyTpl(root + filename, destPath + filename, answer);
             next();
         }.bind(this));
 
         // create directories
         walker.on("directory", function directoryHandler (root, stat, next) {
             var dirname = "/" + stat.name;
+            var relativePath = root.replace(srcRoot, "");
+            var destPath = buildRoot + relativePath;
 
-            mkdirp(buildRoot + dirname);
+            mkdirp(destPath + dirname);
             next();
         }.bind(this));
 
         // install dependencies after files and directories been created
         walker.on("end", function walkEndHandler () {
-            //this.npmInstall("", {"saveDev": true});
+            this.npmInstall("");
         }.bind(this));
 
         // handle errors

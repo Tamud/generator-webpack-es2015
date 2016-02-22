@@ -9,6 +9,7 @@
     "license": "<%= license %>",
     "author": "<%= githubUsername %> <<%= email %>>",
     "scripts": {
+        "test": "mocha",
         "start": "webpack-dev-server",
         "build": "webpack"
     },
@@ -24,6 +25,8 @@
         "eslint": "^1.10.3",
         "eslint-loader": "^1.2.1",
         "style-loader": "^0.13.0",
-        "css-loader": "^0.23.1"
+        "css-loader": "^0.23.1",
+        "mocha": "^2.4.5",
+        "chai": "^3.5.0"
     }
 }

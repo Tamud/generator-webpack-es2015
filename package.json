@@ -16,7 +16,9 @@
     "es2015"
   ],
   "dependencies": {
+    "chai": "^3.5.0",
     "mkdirp": "^0.5.1",
+    "mocha": "^2.4.5",
     "walk": "^2.3.9",
     "yeoman-generator": "^0.22.5"
   }

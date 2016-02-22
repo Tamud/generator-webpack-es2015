@@ -21,7 +21,7 @@ var COMMON = {
         ],
         loaders: [
             {test: /\.js$/, loader: "babel-loader", exclude: /node_modules/},
-            {test: /(\.sass)|(\.scss)|(\.less)|(\.styl)$/, loader: "style!css<%= (typeof preprocessor === 'undefined' || preprocessor === 'none') ? '' : '!' + preprocessor %>"}
+            {test: /\.(sass)|(scss)|(less)|(styl)$/, loader: "style!css<%= (typeof preprocessor === 'undefined' || preprocessor === 'none') ? '' : '!' + preprocessor %>"}
         ]
     }
 };
