@@ -20,7 +20,8 @@ var COMMON = {
             {test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/}
         ],
         loaders: [
-            {test: /\.js$/, loader: "babel-loader", exclude: /node_modules/}
+            {test: /\.js$/, loader: "babel-loader", exclude: /node_modules/},
+            {test: /(\.sass)|(\.scss)|(\.less)|(\.styl)$/, loader: "style!css<%= (typeof preprocessor === 'undefined' || preprocessor === 'none') ? '' : '!' + preprocessor %>"}
         ]
     }
 };

@@ -46,7 +46,33 @@ module.exports = generators.Base.extend({
                 name: "license",
                 message: "License of your project: ",
                 store: true
-            }
+            },
+            //{
+            //    type: "list",
+            //    name: "preprocessor",
+            //    message: "Which CSS preprocessor listed below you prefer?",
+            //    choices: [
+            //        "none",
+            //        "sass",
+            //        "scss",
+            //        "less",
+            //        "stylus"
+            //    ],
+            //    default: 0
+            //},
+            //{
+            //    type: "list",
+            //    name: "template",
+            //    message: "Which template engine listed below you prefer?",
+            //    choices: [
+            //        "none",
+            //        "jade",
+            //        "ejs",
+            //        "swig",
+            //        "haml",
+            //        "mustache"
+            //    ]
+            //}
         ];
 
         this.prompt(prompts, function (answer) {
