@@ -1,23 +1,27 @@
 "use strict";
 var generators = require("yeoman-generator");
 var mkdirp = require("mkdirp");
+var walk = require("walk");
 
 module.exports = generators.Base.extend({
     prompting: function () {
         var done = this.async();
+        var answer = this.config.get("answer");
+        var projectName = answer && answer.projectName || "";
+        var githubRepoUrl = answer && answer.githubRepoUrl || "";
+        var projectDesc = answer && answer.projectDesc || "";
         var prompts = [
             {
                 type: "input",
                 name: "projectName",
                 message: "Your project name: ",
-                default: this.appname,
-                store: true
+                default: this.appname
             },
             {
                 type: "input",
                 name: "projectDesc",
                 message: "Your project description: ",
-                store: true
+                default: projectDesc
             },
             {
                 type: "input",
@@ -27,15 +31,15 @@ module.exports = generators.Base.extend({
             },
             {
                 type: "input",
-                name: "githubRepoUrl",
-                message: "Github repository url of your project: ",
+                name: "email",
+                message: "Your email:",
                 store: true
             },
             {
                 type: "input",
-                name: "email",
-                message: "Your email:",
-                store: true
+                name: "githubRepoUrl",
+                message: "Github repository url of your project: ",
+                default: githubRepoUrl
             },
             {
                 type: "input",
@@ -54,33 +58,36 @@ module.exports = generators.Base.extend({
         var answer = this.config.get("answer");
         var srcRoot = this.templatePath();
         var buildRoot = this.destinationPath();
-        var pkgJSON = "/package.json";
-        var webpackrc = "/webpack.config.js";
-        var eslintrc = "/.eslintrc";
-        var srcFolder = "/src/";
-        var buildFolder = "/build/";
-        var demoFolder = "/demo/";
+        var walker = walk.walk(srcRoot);
 
         // create files
-        this.fs.copyTpl(srcRoot + pkgJSON, buildRoot + pkgJSON, {
-            projectName: answer.projectName,
-            projectDesc: answer.projectDesc,
-            githubUsername: answer.githubUsername,
-            githubRepoUrl: answer.githubRepoUrl,
-            email: answer.email,
-            license: answer.license
-        });
-        this.fs.copyTpl(srcRoot + webpackrc, buildRoot + webpackrc, {
-            projectName: answer.projectName
-        });
-        this.fs.copy(srcRoot + eslintrc, buildRoot + eslintrc);
+        walker.on("file", function fileHandler (root, stat, next) {
+            var filename = "/" + stat.name;
+
+            this.fs.copyTpl(srcRoot + filename, buildRoot + filename, answer);
+            next();
+        }.bind(this));
 
         // create directories
-        mkdirp.sync(buildRoot + srcFolder);
-        mkdirp.sync(buildRoot + buildFolder);
-        mkdirp.sync(buildRoot + demoFolder);
+        walker.on("directory", function directoryHandler (root, stat, next) {
+            var dirname = "/" + stat.name;
 
-        // install dependencies
-        this.npmInstall("", {"saveDev": true});
+            mkdirp(buildRoot + dirname);
+            next();
+        }.bind(this));
+
+        // install dependencies after files and directories been created
+        walker.on("end", function walkEndHandler () {
+            //this.npmInstall("", {"saveDev": true});
+        }.bind(this));
+
+        // handle errors
+        walker.on("error", function errorHandler (root, stat, next) {
+            stat.forEach(function errorIterator (err) {
+                console.error("[ERROR] " + err.name);
+                console.error(err.error.message || (err.error.code + ": " + err.error.path));
+            });
+            next();
+        });
     }
 });
