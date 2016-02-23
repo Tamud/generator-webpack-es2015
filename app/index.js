@@ -7,7 +7,6 @@ module.exports = generators.Base.extend({
     prompting: function () {
         var done = this.async();
         var answer = this.config.get("answer");
-        var projectName = answer && answer.projectName || "";
         var githubRepoUrl = answer && answer.githubRepoUrl || "";
         var projectDesc = answer && answer.projectDesc || "";
         var prompts = [
@@ -84,40 +83,44 @@ module.exports = generators.Base.extend({
         var answer = this.config.get("answer");
         var srcRoot = this.templatePath();
         var buildRoot = this.destinationPath();
-        var walker = walk.walk(srcRoot);
+        var option = {
+            listeners: {
+                // create files
+                file: function fileHandler (root, stat, next) {
+                    var filename = "/" + stat.name;
+                    var relativePath = root.replace(srcRoot, "");
+                    var destPath = buildRoot + relativePath;
 
-        // create files
-        walker.on("file", function fileHandler (root, stat, next) {
-            var filename = "/" + stat.name;
-            var relativePath = root.replace(srcRoot, "");
-            var destPath = buildRoot + relativePath;
+                    this.fs.copyTpl(root + filename, destPath + filename, answer);
+                    next();
+                }.bind(this),
 
-            this.fs.copyTpl(root + filename, destPath + filename, answer);
-            next();
-        }.bind(this));
+                // create directories
+                directory: function directoryHandler (root, stat, next) {
+                    var dirname = "/" + stat.name;
+                    var relativePath = root.replace(srcRoot, "");
+                    var destPath = buildRoot + relativePath;
 
-        // create directories
-        walker.on("directory", function directoryHandler (root, stat, next) {
-            var dirname = "/" + stat.name;
-            var relativePath = root.replace(srcRoot, "");
-            var destPath = buildRoot + relativePath;
+                    mkdirp(destPath + dirname);
+                    next();
+                }.bind(this),
 
-            mkdirp(destPath + dirname);
-            next();
-        }.bind(this));
+                // install dependencies after files and directories been created
+                end: function walkEndHandler () {
+                    this.npmInstall("");
+                }.bind(this),
 
-        // install dependencies after files and directories been created
-        walker.on("end", function walkEndHandler () {
-            this.npmInstall("");
-        }.bind(this));
+                // handle errors
+                errors: function errorHandler (root, stat, next) {
+                    stat.forEach(function errorIterator (err) {
+                        console.error("[ERROR] " + err.name);
+                        console.error(err.error.message || (err.error.code + ": " + err.error.path));
+                    });
+                    next();
+                }
+            }
+        };
 
-        // handle errors
-        walker.on("error", function errorHandler (root, stat, next) {
-            stat.forEach(function errorIterator (err) {
-                console.error("[ERROR] " + err.name);
-                console.error(err.error.message || (err.error.code + ": " + err.error.path));
-            });
-            next();
-        });
+        walk.walkSync(srcRoot, option);
     }
 });

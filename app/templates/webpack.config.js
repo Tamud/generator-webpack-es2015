@@ -1,6 +1,7 @@
+"use strict";
 var webpack = require("webpack");
 var merge = require("webpack-merge");
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+//var HtmlWebpackPlugin = require("html-webpack-plugin");
 var path = require("path");
 var TARGET = process.env.npm_lifecycle_event;
 var PATHS = {
@@ -21,7 +22,7 @@ var COMMON = {
         ],
         loaders: [
             {test: /\.js$/, loader: "babel-loader", exclude: /node_modules/},
-            {test: /\.(sass)|(scss)|(less)|(styl)$/, loader: "style!css<%= (typeof preprocessor === 'undefined' || preprocessor === 'none') ? '' : '!' + preprocessor %>"}
+            {test: /\.(sass)|(scss)|(less)|(styl)$/, loader: "style!css"}
         ]
     }
 };
@@ -37,7 +38,7 @@ if (TARGET === "start" || !TARGET) {
             hot: true,
             inline: true,
             progress: true,
-            stats: 'errors-only',
+            stats: "errors-only",
             host: process.env.HOST,
             port: process.env.PORT
         },
