@@ -9,6 +9,9 @@
     "type": "git",
     "url": "git@github.com:Tamud/generator-webpack-es2015.git"
   },
+  "scripts": {
+    "test": "mocha"
+  },
   "license": "MIT",
   "keywords": [
     "yeoman-generator",
@@ -16,10 +19,13 @@
     "es2015"
   ],
   "dependencies": {
-    "chai": "^3.5.0",
     "mkdirp": "^0.5.1",
-    "mocha": "^2.4.5",
     "walk": "^2.3.9",
     "yeoman-generator": "^0.22.5"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "yeoman-assert": "^2.1.1",
+    "yeoman-test": "^1.1.0"
   }
 }

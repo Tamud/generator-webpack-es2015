@@ -9,11 +9,11 @@ var PATHS = {
 };
 var COMMON = {
     entry: {
-        src: PATHS.src + "<%= projectName %>.js"
+        src: PATHS.src + "index.js"
     },
     output: {
         path: PATHS.build,
-        filename: "<%= projectName %>.bundle.js"
+        filename: "index.bundle.js"
     },
     module: {
         preLoaders: [
