@@ -6,7 +6,7 @@ var helpers = require("yeoman-test");
 describe("webpack-es2015:app", function () {
     before(function (done) {
         helpers.run(path.join(__dirname, "../app"))
-            //.withOptions({ skipInstall: true })
+            .withOptions({ skipInstall: true })
             .withPrompts({
                 projectName: "my-project",
                 projectDesc: "description of my-project",
@@ -40,6 +40,10 @@ describe("webpack-es2015:app", function () {
 
     it("should contain test.js file", function () {
         assert.file("test/test.js");
+    });
+
+    it("should contain src/index.js file", function () {
+        assert.file("src/index.js");
     });
 
     it("should contain src directory", function () {

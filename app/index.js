@@ -2,13 +2,15 @@
 var generators = require("yeoman-generator");
 var mkdirp = require("mkdirp");
 var walk = require("walk");
+var isWindows = /^win/.test(process.platform);
+var dirSuffix = isWindows ? "\\" : "/";
 
 module.exports = generators.Base.extend({
     prompting: function () {
         var done = this.async();
         var answer = this.config.get("answer");
-        var githubRepoUrl = answer && answer.githubRepoUrl || "";
-        var projectDesc = answer && answer.projectDesc || "";
+        var githubRepoUrl = answer && answer.githubRepoUrl;
+        var projectDesc = answer && answer.projectDesc;
         var prompts = [
             {
                 type: "input",
@@ -80,6 +82,7 @@ module.exports = generators.Base.extend({
         }.bind(this));
     },
     writing: function () {
+        var self = this;
         var answer = this.config.get("answer");
         var srcRoot = this.templatePath();
         var buildRoot = this.destinationPath();
@@ -87,28 +90,34 @@ module.exports = generators.Base.extend({
             listeners: {
                 // create files
                 file: function fileHandler (root, stat, next) {
-                    var filename = "/" + stat.name;
+                    var filename = dirSuffix + stat.name;
                     var relativePath = root.replace(srcRoot, "");
                     var destPath = buildRoot + relativePath;
 
-                    this.fs.copyTpl(root + filename, destPath + filename, answer);
+                    self.fs.copyTpl(root + filename, destPath + filename, answer);
                     next();
-                }.bind(this),
+                },
 
                 // create directories
                 directory: function directoryHandler (root, stat, next) {
-                    var dirname = "/" + stat.name;
+                    var dirname = dirSuffix + stat.name;
                     var relativePath = root.replace(srcRoot, "");
                     var destPath = buildRoot + relativePath;
 
-                    mkdirp(destPath + dirname);
+                    mkdirp(destPath + dirname, function (err) {
+                        if (err) {
+                            self.log(err);
+                        } else {
+                            self.log.create(relativePath + stat.name + dirSuffix);
+                        }
+                    });
                     next();
-                }.bind(this),
+                },
 
                 // install dependencies after files and directories been created
                 end: function walkEndHandler () {
-                    this.npmInstall("");
-                }.bind(this),
+                    self.npmInstall("");
+                },
 
                 // handle errors
                 errors: function errorHandler (root, stat, next) {
