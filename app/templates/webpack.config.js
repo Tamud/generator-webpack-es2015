@@ -74,7 +74,7 @@ if (TARGET === "demo") {
 }
 
 if (TARGET === "build") {
-    //module.exports = merge(COMMON, {
+    module.exports = merge(COMMON, {
     //    output: {
     //        path: PATHS.build,
     //        filename: "index.min.js"
@@ -86,5 +86,5 @@ if (TARGET === "build") {
     //            }
     //        })
     //    ]
-    //});
+    });
 }

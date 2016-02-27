@@ -7,6 +7,7 @@ var dirSuffix = isWindows ? "\\" : "/";
 
 module.exports = generators.Base.extend({
     prompting: function () {
+        var self = this;
         var done = this.async();
         var answer = this.config.get("answer");
         var githubRepoUrl = answer && answer.githubRepoUrl;
@@ -76,10 +77,10 @@ module.exports = generators.Base.extend({
             //}
         ];
 
-        this.prompt(prompts, function (answer) {
-            this.config.set("answer", answer);
+        self.prompt(prompts, function (answer) {
+            self.config.set("answer", answer);
             done();
-        }.bind(this));
+        });
     },
     writing: function () {
         var self = this;
