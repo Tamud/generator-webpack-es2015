@@ -89,16 +89,6 @@ module.exports = generators.Base.extend({
         var buildRoot = this.destinationPath();
         var option = {
             listeners: {
-                // create files
-                file: function fileHandler (root, stat, next) {
-                    var filename = dirSuffix + stat.name;
-                    var relativePath = root.replace(srcRoot, "");
-                    var destPath = buildRoot + relativePath;
-
-                    self.fs.copyTpl(root + filename, destPath + filename, answer);
-                    next();
-                },
-
                 // create directories
                 directory: function directoryHandler (root, stat, next) {
                     var dirname = dirSuffix + stat.name;
@@ -112,6 +102,16 @@ module.exports = generators.Base.extend({
                             self.log.create(relativePath + stat.name + dirSuffix);
                         }
                     });
+                    next();
+                },
+
+                // create files
+                file: function fileHandler (root, stat, next) {
+                    var filename = dirSuffix + stat.name;
+                    var relativePath = root.replace(srcRoot, "");
+                    var destPath = buildRoot + relativePath;
+
+                    self.fs.copyTpl(root + filename, destPath + filename, answer);
                     next();
                 },
 
