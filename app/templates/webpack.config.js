@@ -67,7 +67,7 @@ if (TARGET === "demo") {
         },
         plugins: [
             new HtmlWebpackPlugin({
-                filename: "demo.html"
+                filename: "index.html"
             })
         ]
     });

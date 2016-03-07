@@ -46,8 +46,8 @@ describe("webpack-es2015:app", function () {
         assert.file("src/index.js");
     });
 
-    it("should contain demo/demo.html file", function () {
-        assert.file("demo/demo.html");
+    it("should contain demo/index.html file", function () {
+        assert.file("demo/index.html");
     });
 
     it("should contain build/index.min.js file", function () {
