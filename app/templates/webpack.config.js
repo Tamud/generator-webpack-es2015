@@ -6,12 +6,15 @@ var path = require("path");
 var TARGET = process.env.npm_lifecycle_event;
 var PATHS = {
     src: path.join(__dirname, "src/"),
-    build: path.join(__dirname, "build/"),
+    dist: path.join(__dirname, "dist/"),
     demo: path.join(__dirname, "demo/")
 };
 var COMMON = {
     entry: {
-        src: PATHS.src + "index.js"
+        src: PATHS.src + "<%= projectName %>.js"
+    },
+    eslint: {
+        configFile: path.join(__dirname, ".eslintrc")
     },
     module: {
         preLoaders: [
@@ -20,10 +23,12 @@ var COMMON = {
         loaders: [
             {
                 test: /\.js$/,
-                loader: "babel-loader",
+                loader: "babel",
                 exclude: /node_modules/,
                 query: {
-                    presets: ["es2015"]
+                    presets: ["es2015"],
+                    plugins: ["transform-runtime"],
+                    cacheDirectory: true
                 }
             },
             {
@@ -36,12 +41,12 @@ var COMMON = {
 
 if (TARGET === "start" || !TARGET) {
     module.exports = merge(COMMON, {
-        eslint: {
-            configFile: path.join(__dirname, ".eslintrc")
+        entry: {
+            src: PATHS.demo + "demo.js"
         },
         output: {
             path: PATHS.demo,
-            filename: "index.bundle.js"
+            filename: "demo.bundle.js"
         },
         devServer: {
             contentBase: PATHS.demo,
@@ -61,13 +66,19 @@ if (TARGET === "start" || !TARGET) {
 
 if (TARGET === "demo") {
     module.exports = merge(COMMON, {
+        entry: {
+            src: PATHS.demo + "demo.js"
+        },
         output: {
             path: PATHS.demo,
-            filename: "index.bundle.js"
+            filename: "demo.bundle.js"
         },
         plugins: [
             new HtmlWebpackPlugin({
-                filename: "index.html"
+                inject: false,
+                template: "node_modules/html-webpack-template/index.ejs",
+                filename: "index.html",
+                title: "<%= projectName %>"
             })
         ]
     });
@@ -75,16 +86,23 @@ if (TARGET === "demo") {
 
 if (TARGET === "build") {
     module.exports = merge(COMMON, {
-    //    output: {
-    //        path: PATHS.build,
-    //        filename: "index.min.js"
-    //    },
-    //    plugins: [
-    //        new webpack.optimize.UglifyJsPlugin({
-    //            compress: {
-    //                warnings: false
-    //            }
-    //        })
-    //    ]
+        entry: {
+            src: PATHS.src + "<%= projectName %>.js"
+        },
+        output: {
+            libraryTarget: "umd",
+            library: "<%= projectName %>",
+            path: PATHS.dist,
+            filename: "<%= projectName %>.min.js"
+        },
+        plugins: [
+            new webpack.optimize.OccurrenceOrderPlugin(),
+            new webpack.optimize.DedupePlugin(),
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
+            })
+        ]
     });
 }

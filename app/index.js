@@ -17,7 +17,20 @@ module.exports = generators.Base.extend({
                 type: "input",
                 name: "projectName",
                 message: "Your project name: ",
-                default: this.appname
+                default: this.appname,
+                filter: function (answer) {
+                    if (answer.indexOf(" ") === -1) {
+                        return answer;
+                    }
+
+                    // Lowercase all characters and replace all white-spaces with hyphens in the answer
+                    var trunks = answer.split(" ");
+                    return trunks.reduce(function (prev, current) {
+                        current = current.toLowerCase();
+                        
+                        return prev + "-" + current;
+                    });
+                }
             },
             {
                 type: "input",
@@ -85,7 +98,12 @@ module.exports = generators.Base.extend({
     writing: function () {
         var self = this;
         var answer = this.config.get("answer");
+        var projectName = answer && answer.projectName;
         var srcRoot = this.templatePath();
+        var srcProjFileName = projectName + ".js";
+        var srcProjTempFileName = "my-project.js";
+        var distProjTempFileName = "my-project.min.js";
+        var distProjFileName = projectName + ".min.js";
         var buildRoot = this.destinationPath();
         var option = {
             listeners: {
@@ -107,11 +125,20 @@ module.exports = generators.Base.extend({
 
                 // create files
                 file: function fileHandler (root, stat, next) {
-                    var filename = dirSuffix + stat.name;
+                    var srcName = dirSuffix + stat.name;
                     var relativePath = root.replace(srcRoot, "");
                     var destPath = buildRoot + relativePath;
+                    var distName;
 
-                    self.fs.copyTpl(root + filename, destPath + filename, answer);
+                    if (srcName === dirSuffix + srcProjTempFileName) {
+                        distName = dirSuffix + srcProjFileName;
+                    } else if (srcName === dirSuffix + distProjTempFileName) {
+                        distName = dirSuffix + distProjFileName;
+                    } else {
+                        distName = srcName;
+                    }
+
+                    self.fs.copyTpl(root + srcName, destPath + distName, answer);
                     next();
                 },
 
@@ -131,6 +158,7 @@ module.exports = generators.Base.extend({
             }
         };
 
+        // walk throughout templates
         walk.walkSync(srcRoot, option);
     }
 });

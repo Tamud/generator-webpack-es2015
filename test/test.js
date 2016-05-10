@@ -8,8 +8,8 @@ describe("webpack-es2015:app", function () {
         helpers.run(path.join(__dirname, "../app"))
             .withOptions({ skipInstall: true })
             .withPrompts({
-                projectName: "my-project",
-                projectDesc: "description of my-project",
+                projectName: "my-project-test",
+                projectDesc: "description of my-project-test",
                 githubUsername: "Tamud",
                 email: "tamud82@gmail.com",
                 githubRepoUrl: "https://github.com/Tamud",
@@ -42,24 +42,24 @@ describe("webpack-es2015:app", function () {
         assert.file("test/test.js");
     });
 
-    it("should contain src/index.js file", function () {
-        assert.file("src/index.js");
+    it("should contain demo/demo.js file", function () {
+        assert.file("demo/demo.js");
     });
 
-    it("should contain demo/index.html file", function () {
-        assert.file("demo/index.html");
+    it("should contain src/my-project-test.js file", function () {
+        assert.file("src/my-project-test.js");
     });
 
-    it("should contain build/index.min.js file", function () {
-        assert.file("build/index.min.js");
+    it("should contain dist/my-project-test.min.js file", function () {
+        assert.file("dist/my-project-test.min.js");
     });
 
     it("should contain src directory", function () {
         assert.file("src/");
     });
-
-    it("should contain build directory", function () {
-        assert.file("build/");
+    
+    it("should contain dist directory", function () {
+        assert.file("dist/");
     });
 
     it("should contain test directory", function () {
@@ -72,11 +72,11 @@ describe("webpack-es2015:app", function () {
 
     // check if answers been rendered to package.json file
     it("should contain projectName in package.json file", function () {
-        assert.fileContent("package.json", /"name": "my-project"/);
+        assert.fileContent("package.json", /"name": "my-project-test"/);
     });
 
     it("should contain projectDesc in package.json file", function () {
-        assert.fileContent("package.json", /"description": "description of my-project"/);
+        assert.fileContent("package.json", /"description": "description of my-project-test"/);
     });
 
     it("should contain repository url in package.json file", function () {
